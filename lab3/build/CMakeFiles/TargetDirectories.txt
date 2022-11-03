@@ -1,0 +1,3 @@
+/home/student/lab3/build/CMakeFiles/rebuild_cache.dir
+/home/student/lab3/build/CMakeFiles/edit_cache.dir
+/home/student/lab3/build/CMakeFiles/my_solution.dir
