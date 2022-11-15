@@ -15,8 +15,8 @@ class Event{
         bool barAvailable;
 
     public:
-        Event(void);                         //default constructor
-        Event(string, string, int, bool);   //constructor with parameters
+        Event(void);                            //default constructor
+        Event(string, string, int, bool);       //constructor with parameters
         string getVenue();
         string getDate();
         int getDurationInHours();
@@ -26,6 +26,9 @@ class Event{
         void setDurationInHours(int);
         void setBarAvailable(bool);
         void displayInfo();
+        Event(const Event&);                    //copy constructor
+	    Event operator=(Event);                 //copy assignment operator
+        ~Event(void);                           //destructor
 
 };
 #endif

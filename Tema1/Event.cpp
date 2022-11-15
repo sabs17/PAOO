@@ -61,6 +61,29 @@ void Event::displayInfo(){
     cout<<"\nVenue: "<<this->venue<<"\n"<<"Date: "<<this->date<<"\n"<<"Duration: "<<this->durationInHours<<" hours \n"<<bar<<"\n";
 }
 
+//Item 5: Know what functions C++ silently writes and calls.
+
+Event::Event(const Event& e){
+    cout<<"\nCopy constructor called from Event class.\n";
+    venue = e.venue;
+    date = e.date;
+    durationInHours = e.durationInHours;
+    barAvailable = e.barAvailable;
+}
+
+Event Event::operator = (Event e){
+    cout<<"\nCopy assignment operator called from Event class.\n";
+    venue = e.getVenue();
+    date = e.getDate();
+    durationInHours = e.getDurationInHours();
+    barAvailable = e.getBarAvailable();
+    return *this;
+}
+
+Event::~Event(){
+    cout<<"\nEvent is DESTROYED\n";
+}
+
 //Concert
 
 //default constructor
@@ -91,6 +114,38 @@ void Concert::displayInfo()
     cout<<"Band: "<<this->band<<"\n";
 }
 
+//Item 5: Know what functions C++ silently writes and calls.
+
+Concert::Concert(const Concert& c){
+    cout<<"\nCopy constructor called from Concert class.\n";
+    Event e((Event)c);
+    setVenue(e.getVenue());
+    setDate(e.getDate());
+    setDurationInHours(e.getDurationInHours());
+    setBarAvailable(e.getBarAvailable());
+    setBand(c.band);
+}
+
+Concert Concert::operator = (Concert c){
+    cout<<"\nCopy assignment operator called from Concert class.\n";
+    Event e;
+    e = ((Event) c);
+    setVenue(e.getVenue());
+    setDate(e.getDate());
+    setDurationInHours(e.getDurationInHours());
+    setBarAvailable(e.getBarAvailable());
+    band = c.band;
+    return *this;
+}
+
+Concert::~Concert(){
+    cout<<"\nConcert is DESTROYED\n";
+}
+
+class Play: public Event{
+
+};
+
 int main(){ 
 
     Event e;
@@ -98,16 +153,29 @@ int main(){
     Concert c;
     Concert c2("tot acasa", "maine", 2, false, "eu");
     //cout<<e2.getDate()<<"\n"<<c2.getBand()<<"\n";
-    e.displayInfo();
-    e2.displayInfo();
-    c.displayInfo();
-    c2.displayInfo();
+    //e.displayInfo();
+    //e2.displayInfo();
+    //c.displayInfo();
+    //c2.displayInfo();
 
     //Item 4: Make sure that objects are initialized before they’re used.
     int duration = 0;   //initialization of a built-in type
     duration = 5;       //assignation
     c2.setDurationInHours(duration);
-    cout<<c2.getDurationInHours()<<"\n";
+    //cout<<c2.getDurationInHours()<<"\n";
+    //((Event)c2).displayInfo();
+
+    //item 5
+    Concert c3(c2);
+    c = c2;
+
+    Event e3(e2);
+    e = e2;
+
+    Play p;
+    Play p2(p);
+    Play p3;
+    p3 = p;
 
     return 0;
 }

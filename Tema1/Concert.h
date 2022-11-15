@@ -17,6 +17,9 @@ class Concert: public Event{
         string getBand();
         void setBand(string);
         void displayInfo();
+        Concert(const Concert&);                           //copy constructor
+	    Concert operator=(Concert);                        //copy assignment operator
+        ~Concert(void);                                    //destructor
 
 };
 #endif
