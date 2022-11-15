@@ -1,0 +1,1 @@
+/usr/bin/c++    -rdynamic CMakeFiles/Tema1.dir/Event.cpp.o  -o Tema1 
