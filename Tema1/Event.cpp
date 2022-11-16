@@ -118,23 +118,20 @@ void Concert::displayInfo()
 
 Concert::Concert(const Concert& c){
     cout<<"\nCopy constructor called from Concert class.\n";
-    Event e((Event)c);
-    setVenue(e.getVenue());
-    setDate(e.getDate());
-    setDurationInHours(e.getDurationInHours());
-    setBarAvailable(e.getBarAvailable());
-    setBand(c.band);
+    venue = c.venue;
+    date = c.date;
+    durationInHours = c.durationInHours;
+    barAvailable = c.barAvailable;
+    band = c.band;
 }
 
 Concert Concert::operator = (Concert c){
     cout<<"\nCopy assignment operator called from Concert class.\n";
-    Event e;
-    e = ((Event) c);
-    setVenue(e.getVenue());
-    setDate(e.getDate());
-    setDurationInHours(e.getDurationInHours());
-    setBarAvailable(e.getBarAvailable());
-    band = c.band;
+    venue = c.getVenue();
+    date = c.getDate();
+    durationInHours = c.getDurationInHours();
+    barAvailable = c.getBarAvailable();
+    band = c.getBand();
     return *this;
 }
 
@@ -165,7 +162,7 @@ int main(){
     //cout<<c2.getDurationInHours()<<"\n";
     //((Event)c2).displayInfo();
 
-    //item 5
+    //Item 5: Know what functions C++ silently writes and calls.
     Concert c3(c2);
     c = c2;
 

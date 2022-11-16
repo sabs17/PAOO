@@ -8,7 +8,7 @@ using namespace std;
 
 class Event{
 
-    private:
+    protected:
         string venue;
         string date;
         int durationInHours;
