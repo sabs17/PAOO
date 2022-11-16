@@ -14,10 +14,6 @@ class Event{
         int durationInHours;
         bool barAvailable;
 
-    private:
-        Event(const Event&);                    //copy constructor
-        Event operator=(Event);                 //copy assignment operator
-
     public:
         Event(void);                            //default constructor
         Event(string, string, int, bool);       //constructor with parameters
@@ -30,8 +26,8 @@ class Event{
         void setDurationInHours(int);
         void setBarAvailable(bool);
         void displayInfo();
-        //Event(const Event&);                    //copy constructor
-	    //Event operator=(Event);                 //copy assignment operator
+        Event(const Event&);                    //copy constructor
+	    Event operator=(Event);                 //copy assignment operator
         ~Event(void);                             //destructor
 
 };
