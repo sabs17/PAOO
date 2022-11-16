@@ -1,0 +1,3 @@
+/mnt/e/Facultate/an4/Sem1/PAOO/PAOO/Tema1/CMakeFiles/rebuild_cache.dir
+/mnt/e/Facultate/an4/Sem1/PAOO/PAOO/Tema1/CMakeFiles/edit_cache.dir
+/mnt/e/Facultate/an4/Sem1/PAOO/PAOO/Tema1/CMakeFiles/ex.dir
