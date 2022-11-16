@@ -62,7 +62,7 @@ void Event::displayInfo(){
 }
 
 //Item 5: Know what functions C++ silently writes and calls.
-
+/*
 Event::Event(const Event& e){
     cout<<"\nCopy constructor called from Event class.\n";
     venue = e.venue;
@@ -79,6 +79,10 @@ Event Event::operator = (Event e){
     barAvailable = e.getBarAvailable();
     return *this;
 }
+*/
+//Item 6: Explicitly disallow the use of compiler generated functions you do not want
+//copy constructor and copy assignment operator are declared private and have no implementation so
+//they can't be called
 
 Event::~Event(){
     cout<<"\nEvent is DESTROYED\n";
@@ -166,6 +170,10 @@ int main(){
     Concert c3(c2);
     c = c2;
 
+    //Item 6: Explicitly disallow the use of compiler generated functions you do not want
+    //copy constructor is private => copy and assign will have errors
+
+/*
     Event e3(e2);
     e = e2;
 
@@ -173,6 +181,7 @@ int main(){
     Play p2(p);
     Play p3;
     p3 = p;
+*/
 
     return 0;
 }
