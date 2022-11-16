@@ -75,6 +75,7 @@ Event Event::operator = (Event e){
     date = e.getDate();
     durationInHours = e.getDurationInHours();
     barAvailable = e.getBarAvailable();
+    //Item 10: Have assignment operators return a reference to *this.
     return *this;
 }
 
@@ -129,6 +130,7 @@ Concert Concert::operator = (Concert c){
     durationInHours = c.getDurationInHours();
     barAvailable = c.getBarAvailable();
     band = c.getBand();
+    //Item 10: Have assignment operators return a reference to *this.
     return *this;
 }
 
@@ -144,9 +146,17 @@ class Play: public Event{
 int main(){ 
 
     Event e;
-    Event e2("Acasa", "acu", 1, true);
+    Event e1("Acasa", "acu", 1, true);
+    Event e2;
     Concert c;
-    Concert c2("tot acasa", "maine", 2, false, "eu");
+    Concert c1("tot acasa", "maine", 2, false, "eu");
+    Concert c2;
+
+    //Item 10: Have assignment operators return a reference to *this.
+    e = e2 = e1;
+    c = c2 = c1;
+    e.displayInfo();
+    c.displayInfo();
 
     return 0;
 }
