@@ -11,6 +11,7 @@ Event::Event() :
     barAvailable(false)
 {}
 
+//Item 12: Copy all parts of an object.
 //constructor with parameters
 Event::Event(string venue, string date, int durationInHours, bool barAvailable) :
     venue(venue),
@@ -60,6 +61,7 @@ void Event::displayInfo(){
     cout<<"\nVenue: "<<this->venue<<"\n"<<"Date: "<<this->date<<"\n"<<"Duration: "<<this->durationInHours<<" hours \n"<<bar<<"\n";
 }
 
+//Item 12: Copy all parts of an object.
 //copy constructor
 Event::Event(const Event& e){
     cout<<"\nCopy constructor called from Event class.\n";
@@ -93,6 +95,7 @@ Concert::Concert() :
     band()
 {}
 
+//Item 12: Copy all parts of an object.
 //constructor with parameters
 Concert::Concert(string venue, string date, int durationInHours, bool barAvailable, string band) :
     Event(venue, date, durationInHours, barAvailable),
@@ -113,6 +116,7 @@ void Concert::displayInfo()
     cout<<"Band: "<<this->band<<"\n";
 }
 
+//Item 12: Copy all parts of an object.
 //copy constructor
 Concert::Concert(const Concert& c){
     cout<<"\nCopy constructor called from Concert class.\n";
@@ -148,6 +152,7 @@ Festival::Festival() :
     secondConcert(NULL)
 {}
 
+//Item 12: Copy all parts of an object.
 //constructor with parameters
 Festival::Festival(Concert *firstConcert, Concert *secondConcert) :
     firstConcert(firstConcert),
@@ -180,6 +185,7 @@ void Festival::displayInfo()
     cout<<"******\n";
 }
 
+//Item 12: Copy all parts of an object.
 //copy constructor
 Festival::Festival(const Festival& f){
     cout<<"\nCopy constructor called from Festival class.\n";
@@ -194,7 +200,10 @@ Festival& Festival::operator = (Festival& f){
 
     //Item 11: Handle assignment to self in operator=.
     //identity test
-    if (this == &f) return *this;
+    if (this == &f){
+        cout<<"Assignment to self\n";
+         return *this;
+    }
     delete firstConcert;
     delete secondConcert;
     firstConcert = new Concert(*f.firstConcert);
@@ -219,6 +228,7 @@ int main(){
     e.displayInfo();
     c.displayInfo();
 
+
     //Item 11: Handle assignment to self in operator=.
     Festival f(&c, &c1);
     Festival f1(f);
@@ -230,6 +240,9 @@ int main(){
     //error if identity test doesn't exist
     f = f;
     f.displayInfo();
+
+
+    //Item 12: Copy all parts of an object.
 
     return 0;
 }
