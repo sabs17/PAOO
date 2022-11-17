@@ -118,8 +118,12 @@ void Concert::displayInfo()
 
 //Item 12: Copy all parts of an object.
 //copy constructor
-Concert::Concert (const Concert& c) : Event(c){
+Concert::Concert(const Concert& c){
     cout<<"\nCopy constructor called from Concert class.\n";
+    venue = c.venue;
+    date = c.date;
+    durationInHours = c.durationInHours;
+    barAvailable = c.barAvailable;
     band = c.band;
 }
 
@@ -212,7 +216,7 @@ int main(){
     Event e1("Acasa", "acu", 1, true);
     Event e2;
     Concert c;
-    Concert c1("tot acasa", "maine", 2, false, "some band");
+    Concert c1("tot acasa", "maine", 2, false, "Some band");
     Concert c2;
 
     //Item 10: Have assignment operators return a reference to *this.
@@ -236,8 +240,6 @@ int main(){
 
 
     //Item 12: Copy all parts of an object.
-    Concert c3(c1);
-    c3.displayInfo();
 
     return 0;
 }
