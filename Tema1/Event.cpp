@@ -123,6 +123,7 @@ Concert::Concert (const Concert& c) : Event(c){
     band = c.band;
 }
 
+//Item 12: Copy all parts of an object.
 //copy assignment operator
 Concert Concert::operator = (Concert c){
     cout<<"\nCopy assignment operator called from Concert class.\n";
@@ -131,6 +132,9 @@ Concert Concert::operator = (Concert c){
     //Item 10: Have assignment operators return a reference to *this.
     return *this;
 }
+//changed copy and assignment constructors to call Event copy and assignment constructors to
+//cover possible parameter changes in Event class (only change Event constructors, not also
+//Concert constructors -> item 12
 
 //destructor
 Concert::~Concert(){
