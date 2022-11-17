@@ -21,6 +21,6 @@ class Festival{
         void displayInfo();
         Festival(const Festival&);                                  //copy constructor
 	    Festival& operator=(Festival&);                             //copy assignment operator
-
+        ~Festival(void);
 };
 #endif

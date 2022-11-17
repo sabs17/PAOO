@@ -2,6 +2,7 @@
 #include "Concert.h"
 #include "Festival.h"
 #include <memory>
+//#include <mutex>
 using namespace std;
 
 //default constructor
@@ -90,13 +91,15 @@ Event* createEvent(){
 //default constructor
 Concert::Concert() :
     Event(),
-    band()
+    band(),
+    booked(false)
 {}
 
 //constructor with parameters
 Concert::Concert(string venue, string date, int durationInHours, bool barAvailable, string band) :
     Event(venue, date, durationInHours, barAvailable),
-    band(band)
+    band(band),
+    booked(false)
 {}
 
 string Concert::getBand(){
@@ -105,6 +108,21 @@ string Concert::getBand(){
 
 void Concert::setBand(string band){
     this->band = band;
+}
+
+bool Concert::getBooked(){
+    return this->booked;
+}
+
+void Concert::setBooked(bool booked){
+    this->booked = booked;
+}
+
+void Concert::isConcertBooked(){
+    if(this->booked == false)
+        cout<<"\nthe concert played by "<<this->band<<" is NOT booked\n";
+    else
+        cout<<"\nthe concert played by "<<this->band<<" is booked\n";
 }
 
 void Concert::displayInfo()
@@ -117,6 +135,7 @@ void Concert::displayInfo()
 Concert::Concert (const Concert& c) : Event(c){
     cout<<"\nCopy constructor called from Concert class.\n";
     band = c.band;
+    booked = false;
 }
 
 //copy assignment operator
@@ -124,6 +143,7 @@ Concert Concert::operator = (Concert c){
     cout<<"\nCopy assignment operator called from Concert class.\n";
     Event::operator=(c);
     band = c.band;
+    booked = false;
     return *this;
 }
 
@@ -139,7 +159,10 @@ Festival::Festival() :
 Festival::Festival(Concert *firstConcert, Concert *secondConcert) :
     firstConcert(firstConcert),
     secondConcert(secondConcert)
-{}
+{
+    this->firstConcert->lock(*firstConcert);
+    this->secondConcert->lock(*secondConcert);
+}
 
 Concert* Festival::getFirstConcert(){
     return this->firstConcert;
@@ -151,10 +174,12 @@ Concert* Festival::getSecondConcert(){
 
 void Festival::setFirstConcert(Concert *firstConcert){
     this->firstConcert = firstConcert;
+    this->firstConcert->lock(*firstConcert);
 }
 
 void Festival::setSecondConcert(Concert *secondConcert){
     this->secondConcert = secondConcert;
+    this->secondConcert->lock(*secondConcert);
 }
 
 void Festival::displayInfo()
@@ -168,6 +193,11 @@ void Festival::displayInfo()
     if(this->secondConcert != NULL) this->secondConcert->displayInfo();
     else cout<<"TBA\n";
     cout<<"******\n";
+}
+
+Festival::~Festival(){
+    this->firstConcert->unlock(*firstConcert);
+    this->secondConcert->unlock(*secondConcert);
 }
 
 //copy constructor
@@ -204,6 +234,17 @@ int demoNoRAII(){
     return 0;
 }
 
+//lock and unlock functions
+void Concert::lock(Concert &c){
+    cout<<"\nthe concert played by "<<c.getBand()<<" was booked by someone\n";
+    c.setBooked(true);
+}
+
+void Concert::unlock(Concert &c){
+    cout<<"\nthe band "<<c.getBand()<<" is now free\n";
+    c.setBooked(false);
+}
+
 int main(){ 
 
     Event e;
@@ -229,6 +270,30 @@ int main(){
 
     //demoNoRAII();
     //the delete statement isn't reached
+
+
+    //Item 14: Think carefully about copying behavior in resource-managing classes.
+
+    c1.isConcertBooked();
+    c1.lock(c1);
+    c1.isConcertBooked();
+    c1.unlock(c1);
+    c1.isConcertBooked();
+    c1.lock(c1);
+    Concert c2(c1);
+    c2.isConcertBooked();
+    c1.isConcertBooked();
+    c1.unlock(c1);
+    c2.lock(c2);
+    c2.isConcertBooked();
+    c1.isConcertBooked();
+
+    Concert fc("venue1", "today", 1, true, "Metallica");
+    Concert sc("venue2", "tomorrow", 2, false, "AC/DC");
+    Festival f(&fc, &sc);
+    f.displayInfo();
+    Festival f2(f);
+    f2.getFirstConcert()->isConcertBooked();
 
     return 0;
 }
