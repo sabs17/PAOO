@@ -19,7 +19,7 @@ class Concert: public Event{
         void displayInfo();
         Concert(const Concert&);                           //copy constructor
 	    Concert operator=(Concert);                        //copy assignment operator
-        ~Concert(void);                                    //destructor
+        //~Concert(void);                                    //destructor
 
 };
 #endif

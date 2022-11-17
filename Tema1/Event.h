@@ -28,7 +28,8 @@ class Event{
         void displayInfo();
         Event(const Event&);                    //copy constructor
 	    Event operator=(Event);                 //copy assignment operator
-        ~Event(void);                             //destructor
+        //~Event(void);                         //destructor
+        Event* createEvent();                   //Item 13: Use objects to manage resources.
 
 };
 #endif

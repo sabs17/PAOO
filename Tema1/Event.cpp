@@ -1,6 +1,7 @@
 #include "Event.h"
 #include "Concert.h"
 #include "Festival.h"
+#include <memory>
 using namespace std;
 
 //default constructor
@@ -79,9 +80,9 @@ Event Event::operator = (Event e){
     return *this;
 }
 
-//destructor
-Event::~Event(){
-    //cout<<"\nEvent is DESTROYED\n";
+//Item 13: Use objects to manage resources.
+Event* createEvent(){
+    return (new Event);
 }
 
 //Concert
@@ -124,11 +125,6 @@ Concert Concert::operator = (Concert c){
     Event::operator=(c);
     band = c.band;
     return *this;
-}
-
-//destructor
-Concert::~Concert(){
-    //cout<<"\nConcert is DESTROYED\n";
 }
 
 //Festival
@@ -199,6 +195,15 @@ Festival& Festival::operator = (Festival& f){
     return *this;
 }
 
+int demoNoRAII(){
+    Event *ev = createEvent();
+    ev->setDurationInHours(1);
+    if(ev->getDurationInHours() == 1) return -1;
+    cout<<"got to delete\n";
+    delete ev;
+    return 0;
+}
+
 int main(){ 
 
     Event e;
@@ -207,6 +212,23 @@ int main(){
     Concert c1("tot acasa", "maine", 2, false, "some band");
 
     //Item 13: Use objects to manage resources.
+
+    auto_ptr<Event> e2(createEvent());
+    e2->setDurationInHours(5);
+    auto_ptr<Event> e3(e2);
+    //cout<<"\n"<<e2->getDurationInHours()<<"\n";       //SEGMENTATION FAULT -> e2 is now null
+    cout<<"\n"<<e3->getDurationInHours()<<"\n"; 
+
+    shared_ptr<Event> e4(createEvent());
+    e4->setDurationInHours(7);
+    shared_ptr<Event> e5;
+    e5 = e4;
+    cout<<"\n"<<e4->getDurationInHours()<<"\n";       //both e4 and e5 now point to the object
+    cout<<"\n"<<e5->getDurationInHours()<<"\n"; 
+    //shared_ptr and auto_ptr release resources in their destructors -> prevent resource leaks
+
+    //demoNoRAII();
+    //the delete statement isn't reached
 
     return 0;
 }
