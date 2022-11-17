@@ -11,7 +11,6 @@ Event::Event() :
     barAvailable(false)
 {}
 
-//Item 12: Copy all parts of an object.
 //constructor with parameters
 Event::Event(string venue, string date, int durationInHours, bool barAvailable) :
     venue(venue),
@@ -61,7 +60,6 @@ void Event::displayInfo(){
     cout<<"\nVenue: "<<this->venue<<"\n"<<"Date: "<<this->date<<"\n"<<"Duration: "<<this->durationInHours<<" hours \n"<<bar<<"\n";
 }
 
-//Item 12: Copy all parts of an object.
 //copy constructor
 Event::Event(const Event& e){
     cout<<"\nCopy constructor called from Event class.\n";
@@ -78,7 +76,6 @@ Event Event::operator = (Event e){
     date = e.getDate();
     durationInHours = e.getDurationInHours();
     barAvailable = e.getBarAvailable();
-    //Item 10: Have assignment operators return a reference to *this.
     return *this;
 }
 
@@ -95,7 +92,6 @@ Concert::Concert() :
     band()
 {}
 
-//Item 12: Copy all parts of an object.
 //constructor with parameters
 Concert::Concert(string venue, string date, int durationInHours, bool barAvailable, string band) :
     Event(venue, date, durationInHours, barAvailable),
@@ -116,25 +112,19 @@ void Concert::displayInfo()
     cout<<"Band: "<<this->band<<"\n";
 }
 
-//Item 12: Copy all parts of an object.
 //copy constructor
 Concert::Concert (const Concert& c) : Event(c){
     cout<<"\nCopy constructor called from Concert class.\n";
     band = c.band;
 }
 
-//Item 12: Copy all parts of an object.
 //copy assignment operator
 Concert Concert::operator = (Concert c){
     cout<<"\nCopy assignment operator called from Concert class.\n";
     Event::operator=(c);
     band = c.band;
-    //Item 10: Have assignment operators return a reference to *this.
     return *this;
 }
-//changed copy and assignment constructors to call Event copy and assignment constructors to
-//cover possible parameter changes in Event class (only change Event constructors, not also
-//Concert constructors -> item 12
 
 //destructor
 Concert::~Concert(){
@@ -149,7 +139,6 @@ Festival::Festival() :
     secondConcert(NULL)
 {}
 
-//Item 12: Copy all parts of an object.
 //constructor with parameters
 Festival::Festival(Concert *firstConcert, Concert *secondConcert) :
     firstConcert(firstConcert),
@@ -176,13 +165,15 @@ void Festival::displayInfo()
 {
     cout<<"\n***Festival***";
     cout<<"\nFirst concert: ";
-    this->firstConcert->displayInfo();
+    if(this->firstConcert != NULL) this->firstConcert->displayInfo();
+    else cout<<"TBA\n";
+
     cout<<"\nSecond concert: ";
-    this->secondConcert->displayInfo();
+    if(this->secondConcert != NULL) this->secondConcert->displayInfo();
+    else cout<<"TBA\n";
     cout<<"******\n";
 }
 
-//Item 12: Copy all parts of an object.
 //copy constructor
 Festival::Festival(const Festival& f){
     cout<<"\nCopy constructor called from Festival class.\n";
@@ -195,7 +186,6 @@ Festival::Festival(const Festival& f){
 Festival& Festival::operator = (Festival& f){
     cout<<"\nCopy assignment operator called from Festival class.\n";
 
-    //Item 11: Handle assignment to self in operator=.
     //identity test
     if (this == &f){
         cout<<"Assignment to self\n";
@@ -206,7 +196,6 @@ Festival& Festival::operator = (Festival& f){
     firstConcert = new Concert(*f.firstConcert);
     secondConcert = new Concert(*f.secondConcert);
     
-    //Item 10: Have assignment operators return a reference to *this.
     return *this;
 }
 
@@ -214,34 +203,10 @@ int main(){
 
     Event e;
     Event e1("Acasa", "acu", 1, true);
-    Event e2;
     Concert c;
     Concert c1("tot acasa", "maine", 2, false, "some band");
-    Concert c2;
 
-    //Item 10: Have assignment operators return a reference to *this.
-    e = e2 = e1;
-    c = c2 = c1;
-    e.displayInfo();
-    c.displayInfo();
-
-
-    //Item 11: Handle assignment to self in operator=.
-    Festival f(&c, &c1);
-    Festival f1(f);
-    Festival f2;
-    f2 = f;
-    f2.displayInfo();
-
-    //Item 11: Handle assignment to self in operator=.
-    //error if identity test doesn't exist
-    f = f;
-    f.displayInfo();
-
-
-    //Item 12: Copy all parts of an object.
-    Concert c3(c1);
-    c3.displayInfo();
+    //Item 13: Use objects to manage resources.
 
     return 0;
 }
