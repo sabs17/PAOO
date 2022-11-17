@@ -293,7 +293,7 @@ int main(){
     Festival f(&fc, &sc);
     f.displayInfo();
     Festival f2(f);
-    f2.getFirstConcert()->isConcertBooked();
+    //f2.getFirstConcert()->isConcertBooked();
 
     return 0;
 }
