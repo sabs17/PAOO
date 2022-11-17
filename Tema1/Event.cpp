@@ -1,9 +1,9 @@
 #include "Event.h"
 #include "Concert.h"
+#include "Festival.h"
 using namespace std;
 
 //default constructor
-//Item 4: Make sure that objects are initialized before they’re used.
 Event::Event() :
     venue(),
     date(),
@@ -11,8 +11,8 @@ Event::Event() :
     barAvailable(false)
 {}
 
+//Item 12: Copy all parts of an object.
 //constructor with parameters
-//Item 4: Make sure that objects are initialized before they’re used.
 Event::Event(string venue, string date, int durationInHours, bool barAvailable) :
     venue(venue),
     date(date),
@@ -61,8 +61,8 @@ void Event::displayInfo(){
     cout<<"\nVenue: "<<this->venue<<"\n"<<"Date: "<<this->date<<"\n"<<"Duration: "<<this->durationInHours<<" hours \n"<<bar<<"\n";
 }
 
-//Item 5: Know what functions C++ silently writes and calls.
-/*
+//Item 12: Copy all parts of an object.
+//copy constructor
 Event::Event(const Event& e){
     cout<<"\nCopy constructor called from Event class.\n";
     venue = e.venue;
@@ -71,34 +71,32 @@ Event::Event(const Event& e){
     barAvailable = e.barAvailable;
 }
 
+//copy assignment operator
 Event Event::operator = (Event e){
     cout<<"\nCopy assignment operator called from Event class.\n";
     venue = e.getVenue();
     date = e.getDate();
     durationInHours = e.getDurationInHours();
     barAvailable = e.getBarAvailable();
+    //Item 10: Have assignment operators return a reference to *this.
     return *this;
 }
-*/
-//Item 6: Explicitly disallow the use of compiler generated functions you do not want
-//copy constructor and copy assignment operator are declared private and have no implementation so
-//they can't be called
 
+//destructor
 Event::~Event(){
-    cout<<"\nEvent is DESTROYED\n";
+    //cout<<"\nEvent is DESTROYED\n";
 }
 
 //Concert
 
 //default constructor
-//Item 4: Make sure that objects are initialized before they’re used.
 Concert::Concert() :
     Event(),
     band()
 {}
 
+//Item 12: Copy all parts of an object.
 //constructor with parameters
-//Item 4: Make sure that objects are initialized before they’re used.
 Concert::Concert(string venue, string date, int durationInHours, bool barAvailable, string band) :
     Event(venue, date, durationInHours, barAvailable),
     band(band)
@@ -118,70 +116,132 @@ void Concert::displayInfo()
     cout<<"Band: "<<this->band<<"\n";
 }
 
-//Item 5: Know what functions C++ silently writes and calls.
-
-Concert::Concert(const Concert& c){
+//Item 12: Copy all parts of an object.
+//copy constructor
+Concert::Concert (const Concert& c) : Event(c){
     cout<<"\nCopy constructor called from Concert class.\n";
-    venue = c.venue;
-    date = c.date;
-    durationInHours = c.durationInHours;
-    barAvailable = c.barAvailable;
     band = c.band;
 }
 
+//Item 12: Copy all parts of an object.
+//copy assignment operator
 Concert Concert::operator = (Concert c){
     cout<<"\nCopy assignment operator called from Concert class.\n";
-    venue = c.getVenue();
-    date = c.getDate();
-    durationInHours = c.getDurationInHours();
-    barAvailable = c.getBarAvailable();
-    band = c.getBand();
+    Event::operator=(c);
+    band = c.band;
+    //Item 10: Have assignment operators return a reference to *this.
     return *this;
 }
+//changed copy and assignment constructors to call Event copy and assignment constructors to
+//cover possible parameter changes in Event class (only change Event constructors, not also
+//Concert constructors -> item 12
 
+//destructor
 Concert::~Concert(){
-    cout<<"\nConcert is DESTROYED\n";
+    //cout<<"\nConcert is DESTROYED\n";
 }
 
-class Play: public Event{
+//Festival
 
-};
+//default constructor
+Festival::Festival() :
+    firstConcert(NULL),
+    secondConcert(NULL)
+{}
+
+//Item 12: Copy all parts of an object.
+//constructor with parameters
+Festival::Festival(Concert *firstConcert, Concert *secondConcert) :
+    firstConcert(firstConcert),
+    secondConcert(secondConcert)
+{}
+
+Concert* Festival::getFirstConcert(){
+    return this->firstConcert;
+}
+
+Concert* Festival::getSecondConcert(){
+    return this->secondConcert;
+}
+
+void Festival::setFirstConcert(Concert *firstConcert){
+    this->firstConcert = firstConcert;
+}
+
+void Festival::setSecondConcert(Concert *secondConcert){
+    this->secondConcert = secondConcert;
+}
+
+void Festival::displayInfo()
+{
+    cout<<"\n***Festival***";
+    cout<<"\nFirst concert: ";
+    this->firstConcert->displayInfo();
+    cout<<"\nSecond concert: ";
+    this->secondConcert->displayInfo();
+    cout<<"******\n";
+}
+
+//Item 12: Copy all parts of an object.
+//copy constructor
+Festival::Festival(const Festival& f){
+    cout<<"\nCopy constructor called from Festival class.\n";
+    firstConcert = f.firstConcert;
+    secondConcert = f.secondConcert;
+    
+}
+
+//copy assignment operator
+Festival& Festival::operator = (Festival& f){
+    cout<<"\nCopy assignment operator called from Festival class.\n";
+
+    //Item 11: Handle assignment to self in operator=.
+    //identity test
+    if (this == &f){
+        cout<<"Assignment to self\n";
+         return *this;
+    }
+    delete firstConcert;
+    delete secondConcert;
+    firstConcert = new Concert(*f.firstConcert);
+    secondConcert = new Concert(*f.secondConcert);
+    
+    //Item 10: Have assignment operators return a reference to *this.
+    return *this;
+}
 
 int main(){ 
 
     Event e;
-    Event e2("Acasa", "acu", 1, true);
+    Event e1("Acasa", "acu", 1, true);
+    Event e2;
     Concert c;
-    Concert c2("tot acasa", "maine", 2, false, "eu");
-    //cout<<e2.getDate()<<"\n"<<c2.getBand()<<"\n";
-    //e.displayInfo();
-    //e2.displayInfo();
-    //c.displayInfo();
-    //c2.displayInfo();
+    Concert c1("tot acasa", "maine", 2, false, "some band");
+    Concert c2;
 
-    //Item 4: Make sure that objects are initialized before they’re used.
-    int duration = 0;   //initialization of a built-in type
-    duration = 5;       //assignation
-    c2.setDurationInHours(duration);
-    //cout<<c2.getDurationInHours()<<"\n";
-    //((Event)c2).displayInfo();
+    //Item 10: Have assignment operators return a reference to *this.
+    e = e2 = e1;
+    c = c2 = c1;
+    e.displayInfo();
+    c.displayInfo();
 
-    //Item 5: Know what functions C++ silently writes and calls.
-    Concert c3(c2);
-    c = c2;
 
-    //Item 6: Explicitly disallow the use of compiler generated functions you do not want
-    //copy constructor is private => copy and assign will have errors
+    //Item 11: Handle assignment to self in operator=.
+    Festival f(&c, &c1);
+    Festival f1(f);
+    Festival f2;
+    f2 = f;
+    f2.displayInfo();
 
-/*
-    Event e3(e2);
-    e = e2;
+    //Item 11: Handle assignment to self in operator=.
+    //error if identity test doesn't exist
+    f = f;
+    f.displayInfo();
 
-    Play p;
-    Play p2(p);
-    Play p3;
-    p3 = p;
-*/
+
+    //Item 12: Copy all parts of an object.
+    Concert c3(c1);
+    c3.displayInfo();
 
     return 0;
 }
