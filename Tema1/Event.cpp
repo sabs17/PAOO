@@ -1,5 +1,6 @@
 #include "Event.h"
 #include "Concert.h"
+#include "Festival.h"
 using namespace std;
 
 //default constructor
@@ -81,7 +82,7 @@ Event Event::operator = (Event e){
 
 //destructor
 Event::~Event(){
-    cout<<"\nEvent is DESTROYED\n";
+    //cout<<"\nEvent is DESTROYED\n";
 }
 
 //Concert
@@ -136,12 +137,72 @@ Concert Concert::operator = (Concert c){
 
 //destructor
 Concert::~Concert(){
-    cout<<"\nConcert is DESTROYED\n";
+    //cout<<"\nConcert is DESTROYED\n";
 }
 
-class Play: public Event{
+//Festival
 
-};
+//default constructor
+Festival::Festival() :
+    firstConcert(NULL),
+    secondConcert(NULL)
+{}
+
+//constructor with parameters
+Festival::Festival(Concert *firstConcert, Concert *secondConcert) :
+    firstConcert(firstConcert),
+    secondConcert(secondConcert)
+{}
+
+Concert* Festival::getFirstConcert(){
+    return this->firstConcert;
+}
+
+Concert* Festival::getSecondConcert(){
+    return this->secondConcert;
+}
+
+void Festival::setFirstConcert(Concert *firstConcert){
+    this->firstConcert = firstConcert;
+}
+
+void Festival::setSecondConcert(Concert *secondConcert){
+    this->secondConcert = secondConcert;
+}
+
+void Festival::displayInfo()
+{
+    cout<<"\n***Festival***";
+    cout<<"\nFirst concert: ";
+    this->firstConcert->displayInfo();
+    cout<<"\nSecond concert: ";
+    this->secondConcert->displayInfo();
+    cout<<"******\n";
+}
+
+//copy constructor
+Festival::Festival(const Festival& f){
+    cout<<"\nCopy constructor called from Festival class.\n";
+    firstConcert = f.firstConcert;
+    secondConcert = f.secondConcert;
+    
+}
+
+//copy assignment operator
+Festival& Festival::operator = (Festival& f){
+    cout<<"\nCopy assignment operator called from Festival class.\n";
+
+    //Item 11: Handle assignment to self in operator=.
+    //identity test
+    if (this == &f) return *this;
+    delete firstConcert;
+    delete secondConcert;
+    firstConcert = new Concert(*f.firstConcert);
+    secondConcert = new Concert(*f.secondConcert);
+    
+    //Item 10: Have assignment operators return a reference to *this.
+    return *this;
+}
 
 int main(){ 
 
@@ -157,6 +218,18 @@ int main(){
     c = c2 = c1;
     e.displayInfo();
     c.displayInfo();
+
+    //Item 11: Handle assignment to self in operator=.
+    Festival f(&c, &c1);
+    Festival f1(f);
+    Festival f2;
+    f2 = f;
+    f2.displayInfo();
+
+    //Item 11: Handle assignment to self in operator=.
+    //error if identity test doesn't exist
+    f = f;
+    f.displayInfo();
 
     return 0;
 }
