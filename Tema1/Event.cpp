@@ -1,6 +1,8 @@
 #include "Event.h"
 #include "Concert.h"
 #include "Festival.h"
+#include <memory>
+//#include <mutex>
 using namespace std;
 
 //default constructor
@@ -11,7 +13,6 @@ Event::Event() :
     barAvailable(false)
 {}
 
-//Item 12: Copy all parts of an object.
 //constructor with parameters
 Event::Event(string venue, string date, int durationInHours, bool barAvailable) :
     venue(venue),
@@ -61,7 +62,6 @@ void Event::displayInfo(){
     cout<<"\nVenue: "<<this->venue<<"\n"<<"Date: "<<this->date<<"\n"<<"Duration: "<<this->durationInHours<<" hours \n"<<bar<<"\n";
 }
 
-//Item 12: Copy all parts of an object.
 //copy constructor
 Event::Event(const Event& e){
     cout<<"\nCopy constructor called from Event class.\n";
@@ -78,13 +78,12 @@ Event Event::operator = (Event e){
     date = e.getDate();
     durationInHours = e.getDurationInHours();
     barAvailable = e.getBarAvailable();
-    //Item 10: Have assignment operators return a reference to *this.
     return *this;
 }
 
-//destructor
-Event::~Event(){
-    //cout<<"\nEvent is DESTROYED\n";
+//Item 13: Use objects to manage resources.
+Event* createEvent(){
+    return (new Event);
 }
 
 //Concert
@@ -92,14 +91,15 @@ Event::~Event(){
 //default constructor
 Concert::Concert() :
     Event(),
-    band()
+    band(),
+    booked(false)
 {}
 
-//Item 12: Copy all parts of an object.
 //constructor with parameters
 Concert::Concert(string venue, string date, int durationInHours, bool barAvailable, string band) :
     Event(venue, date, durationInHours, barAvailable),
-    band(band)
+    band(band),
+    booked(false)
 {}
 
 string Concert::getBand(){
@@ -110,35 +110,41 @@ void Concert::setBand(string band){
     this->band = band;
 }
 
+bool Concert::getBooked(){
+    return this->booked;
+}
+
+void Concert::setBooked(bool booked){
+    this->booked = booked;
+}
+
+void Concert::isConcertBooked(){
+    if(this->booked == false)
+        cout<<"\nthe concert played by "<<this->band<<" is NOT booked\n";
+    else
+        cout<<"\nthe concert played by "<<this->band<<" is booked\n";
+}
+
 void Concert::displayInfo()
 {
     Event::displayInfo();
     cout<<"Band: "<<this->band<<"\n";
 }
 
-//Item 12: Copy all parts of an object.
 //copy constructor
 Concert::Concert (const Concert& c) : Event(c){
     cout<<"\nCopy constructor called from Concert class.\n";
     band = c.band;
+    booked = false;
 }
 
-//Item 12: Copy all parts of an object.
 //copy assignment operator
 Concert Concert::operator = (Concert c){
     cout<<"\nCopy assignment operator called from Concert class.\n";
     Event::operator=(c);
     band = c.band;
-    //Item 10: Have assignment operators return a reference to *this.
+    booked = false;
     return *this;
-}
-//changed copy and assignment constructors to call Event copy and assignment constructors to
-//cover possible parameter changes in Event class (only change Event constructors, not also
-//Concert constructors -> item 12
-
-//destructor
-Concert::~Concert(){
-    //cout<<"\nConcert is DESTROYED\n";
 }
 
 //Festival
@@ -149,12 +155,14 @@ Festival::Festival() :
     secondConcert(NULL)
 {}
 
-//Item 12: Copy all parts of an object.
 //constructor with parameters
 Festival::Festival(Concert *firstConcert, Concert *secondConcert) :
     firstConcert(firstConcert),
     secondConcert(secondConcert)
-{}
+{
+    this->firstConcert->lock(*firstConcert);
+    this->secondConcert->lock(*secondConcert);
+}
 
 Concert* Festival::getFirstConcert(){
     return this->firstConcert;
@@ -166,23 +174,32 @@ Concert* Festival::getSecondConcert(){
 
 void Festival::setFirstConcert(Concert *firstConcert){
     this->firstConcert = firstConcert;
+    this->firstConcert->lock(*firstConcert);
 }
 
 void Festival::setSecondConcert(Concert *secondConcert){
     this->secondConcert = secondConcert;
+    this->secondConcert->lock(*secondConcert);
 }
 
 void Festival::displayInfo()
 {
     cout<<"\n***Festival***";
     cout<<"\nFirst concert: ";
-    this->firstConcert->displayInfo();
+    if(this->firstConcert != NULL) this->firstConcert->displayInfo();
+    else cout<<"TBA\n";
+
     cout<<"\nSecond concert: ";
-    this->secondConcert->displayInfo();
+    if(this->secondConcert != NULL) this->secondConcert->displayInfo();
+    else cout<<"TBA\n";
     cout<<"******\n";
 }
 
-//Item 12: Copy all parts of an object.
+Festival::~Festival(){
+    this->firstConcert->unlock(*firstConcert);
+    this->secondConcert->unlock(*secondConcert);
+}
+
 //copy constructor
 Festival::Festival(const Festival& f){
     cout<<"\nCopy constructor called from Festival class.\n";
@@ -195,7 +212,6 @@ Festival::Festival(const Festival& f){
 Festival& Festival::operator = (Festival& f){
     cout<<"\nCopy assignment operator called from Festival class.\n";
 
-    //Item 11: Handle assignment to self in operator=.
     //identity test
     if (this == &f){
         cout<<"Assignment to self\n";
@@ -206,42 +222,78 @@ Festival& Festival::operator = (Festival& f){
     firstConcert = new Concert(*f.firstConcert);
     secondConcert = new Concert(*f.secondConcert);
     
-    //Item 10: Have assignment operators return a reference to *this.
     return *this;
+}
+
+int demoNoRAII(){
+    Event *ev = createEvent();
+    ev->setDurationInHours(1);
+    if(ev->getDurationInHours() == 1) return -1;
+    cout<<"got to delete\n";
+    delete ev;
+    return 0;
+}
+
+//lock and unlock functions
+void Concert::lock(Concert &c){
+    cout<<"\nthe concert played by "<<c.getBand()<<" was booked by someone\n";
+    c.setBooked(true);
+}
+
+void Concert::unlock(Concert &c){
+    cout<<"\nthe band "<<c.getBand()<<" is now free\n";
+    c.setBooked(false);
 }
 
 int main(){ 
 
     Event e;
     Event e1("Acasa", "acu", 1, true);
-    Event e2;
     Concert c;
     Concert c1("tot acasa", "maine", 2, false, "some band");
-    Concert c2;
 
-    //Item 10: Have assignment operators return a reference to *this.
-    e = e2 = e1;
-    c = c2 = c1;
-    e.displayInfo();
-    c.displayInfo();
+    //Item 13: Use objects to manage resources.
+
+    auto_ptr<Event> e2(createEvent());
+    e2->setDurationInHours(5);
+    auto_ptr<Event> e3(e2);
+    //cout<<"\n"<<e2->getDurationInHours()<<"\n";       //SEGMENTATION FAULT -> e2 is now null
+    cout<<"\n"<<e3->getDurationInHours()<<"\n"; 
+
+    shared_ptr<Event> e4(createEvent());
+    e4->setDurationInHours(7);
+    shared_ptr<Event> e5;
+    e5 = e4;
+    cout<<"\n"<<e4->getDurationInHours()<<"\n";       //both e4 and e5 now point to the object
+    cout<<"\n"<<e5->getDurationInHours()<<"\n"; 
+    //shared_ptr and auto_ptr release resources in their destructors -> prevent resource leaks
+
+    //demoNoRAII();
+    //the delete statement isn't reached
 
 
-    //Item 11: Handle assignment to self in operator=.
-    Festival f(&c, &c1);
-    Festival f1(f);
-    Festival f2;
-    f2 = f;
-    f2.displayInfo();
+    //Item 14: Think carefully about copying behavior in resource-managing classes.
 
-    //Item 11: Handle assignment to self in operator=.
-    //error if identity test doesn't exist
-    f = f;
+    c1.isConcertBooked();
+    c1.lock(c1);
+    c1.isConcertBooked();
+    c1.unlock(c1);
+    c1.isConcertBooked();
+    c1.lock(c1);
+    Concert c2(c1);
+    c2.isConcertBooked();
+    c1.isConcertBooked();
+    c1.unlock(c1);
+    c2.lock(c2);
+    c2.isConcertBooked();
+    c1.isConcertBooked();
+
+    Concert fc("venue1", "today", 1, true, "Metallica");
+    Concert sc("venue2", "tomorrow", 2, false, "AC/DC");
+    Festival f(&fc, &sc);
     f.displayInfo();
-
-
-    //Item 12: Copy all parts of an object.
-    Concert c3(c1);
-    c3.displayInfo();
+    Festival f2(f);
+    //f2.getFirstConcert()->isConcertBooked();
 
     return 0;
 }
